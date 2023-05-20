@@ -9,3 +9,10 @@ spring init --build maven --dependencies=web,webflux,data-jpa,postgresql,liquiba
 
 # Initialize Database
 PGPASSWORD=postgres psql -h db -U postgres -c "CREATE DATABASE safecontractchangesdemo;"
+
+# Initialize E2E tests
+mkdir tests
+cd tests
+npx create-playwright --quiet safe-contract-changes-e2e-tests
+mv safe-contract-changes-e2e-tests e2e
+npx playwright install-deps
