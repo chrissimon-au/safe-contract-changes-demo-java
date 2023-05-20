@@ -1,1 +1,0 @@
-PGPASSWORD=postgres psql -h db -U postgres -c "CREATE DATABASE safecontractchangesdemo;"
