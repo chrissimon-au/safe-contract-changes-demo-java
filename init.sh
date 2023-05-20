@@ -1,0 +1,2 @@
+#!/bin/bash
+spring init --build maven --dependencies=web,webflux,data-jpa,postgresql,liquibase -g "au.chrissimon" --package-name "au.chrissimon.safecontractchangesdemo" -n Demo -a SafeContractChangesDemo server --description "Demo of making safe contract changes.  See https://github.com/chrissimon-au/safe-contract-changes-demo-java."
