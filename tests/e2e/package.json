@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "server": "cd ../../server && mvn spring-boot:run",
+    "app": "cd ../../app && npm run dev"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

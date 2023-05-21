@@ -3,15 +3,35 @@ import { useState, ChangeEvent } from 'react';
 
 export default function Names() {
     const [inputName, setInputName] = useState('');
+    const [loading, setLoading] = useState(false);
     const [name, setName] = useState('');
 
     const onChange = (e:ChangeEvent<HTMLInputElement>) => {
         setInputName(e.target.value);
     }
 
-    const addPerson = () => {
-        setName(inputName);
+    const setNameResult = (name: string) => {
+        setLoading(!!!name);
+        setName(name);
     }
+
+    const addPerson = () => {
+        setNameResult('');
+        fetch('http://localhost:8080/names', {
+            method: "POST",
+            body: JSON.stringify({
+                name: inputName
+            }),
+            headers: {
+                'Content-type': 'application/json',
+            },
+        })
+        .then(response => fetch(response.headers.get("Location")!))
+        .then(response => response.json())
+        .then(n => {
+            setNameResult(n.name);
+        });
+    };
 
     return (
         <form className="form">
@@ -26,6 +46,7 @@ export default function Names() {
                     Add Person
                 </button>
             </div>
+            {loading && <div className="form_footer">loading...</div>}
             {name && <div className="form_footer">
                 {name}
             </div>}
