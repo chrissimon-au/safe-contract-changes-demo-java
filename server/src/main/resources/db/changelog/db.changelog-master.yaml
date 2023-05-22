@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/01_initial_schema.yml
+  - include:
+      file: db/changelog/02_add_full_name.yml

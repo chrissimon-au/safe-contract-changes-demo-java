@@ -26,9 +26,10 @@ public class NameTests {
 				.baseUrl("http://localhost:" + port)
 				.build();
 
-        String name = UUID.randomUUID().toString();
+        String firstName = UUID.randomUUID().toString();
+        String lastName = UUID.randomUUID().toString();
 
-        TestAddNameRequest nameRequest = new TestAddNameRequest(name);
+        TestAddNameRequest nameRequest = new TestAddNameRequest(new TestFullName(firstName, lastName));
 
         ResponseSpec response = client
             .post()
@@ -47,7 +48,9 @@ public class NameTests {
                 .getResponseHeaders().getLocation();
 
         response.expectStatus().isCreated();
-        assertThat(nameResponse.getName()).isEqualTo(name);
+        TestFullName fullName = nameResponse.getFullName();
+        assertThat(fullName.getFirstName()).isEqualTo(firstName);
+        assertThat(fullName.getLastName()).isEqualTo(lastName);
         assertThat(nameResponse.getId()).isNotNull();
         assertThat(nameResponse.getId()).isNotEqualTo(new UUID(0, 0));
         assertThat(newNameLocation.toString()).isEqualTo("http://localhost:" + port + "/names/" + nameResponse.getId());
@@ -65,6 +68,8 @@ public class NameTests {
             .getResponseBody();
         
         assertThat(checkNameResponse.getId()).isEqualTo(nameResponse.getId());
-        assertThat(checkNameResponse.getName()).isEqualTo(name);
+        TestFullName checkFullName = nameResponse.getFullName();
+        assertThat(checkFullName.getFirstName()).isEqualTo(firstName);
+        assertThat(checkFullName.getLastName()).isEqualTo(lastName);
     }
 }
