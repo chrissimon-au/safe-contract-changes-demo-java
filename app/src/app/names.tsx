@@ -1,10 +1,14 @@
 'use client';
-import { useState, ChangeEvent } from 'react';
+import { useState, useMemo, ChangeEvent, FormEvent } from 'react';
+import dynamic from 'next/dynamic';
 
-export default function Names() {
+function Names() {
     const [inputName, setInputName] = useState('');
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState('');
+
+    const config = useMemo(() => fetch('config.json')
+        .then(response => response.json()), []);
 
     const onChange = (e:ChangeEvent<HTMLInputElement>) => {
         setInputName(e.target.value);
@@ -15,41 +19,47 @@ export default function Names() {
         setName(name);
     }
 
-    const addPerson = () => {
+    const addPerson = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         setNameResult('');
-        fetch('http://localhost:8080/names', {
-            method: "POST",
-            body: JSON.stringify({
-                name: inputName
-            }),
-            headers: {
-                'Content-type': 'application/json',
-            },
-        })
-        .then(response => fetch(response.headers.get("Location")!))
-        .then(response => response.json())
-        .then(n => {
-            setNameResult(n.name);
-        });
+        
+        config
+            .then(c => 
+                fetch(`${c.SERVER_URL}/names`, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        name: inputName
+                    }),
+                    headers: {
+                        'Content-type': 'application/json',
+                    },
+                }))
+            .then(response => fetch(response.headers.get("Location")!))
+            .then(response => response.json())
+            .then(n => {
+                setNameResult(n.name);
+            });
     };
 
     return (
-        <form className="form">
+        <form className="form" onSubmit={addPerson}>
             <div className="mb-4">
                 <label className="label" htmlFor="name">
                     Name
                 </label>
                 <input className="input" id="name" value={inputName} onChange={onChange} type="text" placeholder="Name"/>
             </div>
-            <div className="form_footer">
-                <button className="btn" onClick={addPerson} type="button">
+            <div>
+                <button className="btn" type="submit">
                     Add Person
                 </button>
             </div>
-            {loading && <div className="form_footer">loading...</div>}
-            {name && <div className="form_footer">
+            {loading && <div className="result">loading...</div>}
+            {name && <div className="result">
                 {name}
             </div>}
         </form>
     )
 }
+
+export default dynamic(() => Promise.resolve(Names), { ssr: false });
