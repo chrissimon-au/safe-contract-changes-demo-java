@@ -22,13 +22,15 @@ public class Name {
         super();
     }
 
-    public Name(String name) {
+    public Name(FullNameDto fullName) {
         super();
         this.id = UUID.randomUUID();
-        this.name = name;
+        this.name = (fullName.getFirstName() + " " + fullName.getLastName()).trim();
     }
 
     public NameResponse toResponse() {
-        return new NameResponse(id, name);
+        String[] names = name.split("\\s", 2);
+        String lastName = names.length > 1 ? names[1] : "";
+        return new NameResponse(id, new FullNameDto(names[0], lastName));
     }
 }
