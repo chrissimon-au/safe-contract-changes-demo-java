@@ -16,3 +16,10 @@ cd tests
 npx create-playwright --quiet safe-contract-changes-e2e-tests
 mv safe-contract-changes-e2e-tests e2e
 npx playwright install-deps
+
+# Initialize Infrastructure
+mkdir safe-contract-changes-demo-infra
+cd safe-contract-changes-demo-infra
+cdk init app --language typescript
+cd ..
+mv safe-contract-changes-demo-infra infra

@@ -15,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", exposedHeaders = "*")
+@CrossOrigin(origins = "*", exposedHeaders = "*")
 public class NamesController {
 
     private NameRepository nameRepository;

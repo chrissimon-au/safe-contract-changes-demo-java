@@ -15,4 +15,4 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 
 # [Optional] Uncomment this line to install global node packages.
 # && npm install -g <your-package-here>" 2>&1
-RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && nvm install node" 2>&1 
+RUN su vscode -c "source /usr/local/share/nvm/nvm.sh && nvm install v18 && npm install -g aws-cdk" 2>&1 
