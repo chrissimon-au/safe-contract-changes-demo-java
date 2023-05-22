@@ -2,20 +2,19 @@ package au.chrissimon.safecontractchangesdemo;
 
 import java.util.UUID;
 
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
 public class Name {
     private @Id UUID id;
-    @Embedded private FullName name;
+    private String name;
 
     public UUID getId() {
         return id;
     }
 
-    public FullName getName() {
+    public String getName() {
         return name;
     }
 
@@ -23,13 +22,13 @@ public class Name {
         super();
     }
 
-    public Name(FullName name) {
+    public Name(String name) {
         super();
         this.id = UUID.randomUUID();
         this.name = name;
     }
 
     public NameResponse toResponse() {
-        return new NameResponse(id, name.toResponse());
+        return new NameResponse(id, name);
     }
 }
