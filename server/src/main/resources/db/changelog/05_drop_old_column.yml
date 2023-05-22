@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: Chris Simon 
+      changes:  
+      -  dropColumn:
+          columnName: name
+          tableName: name
