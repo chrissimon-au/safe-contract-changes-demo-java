@@ -152,3 +152,46 @@ To ensure each step's deployment is safe, you can:
     ```
 
 After the deployment is complete, you can stop the tests with CTRL-C.
+
+### DB Demo
+
+This repository also contains an illustration of this pattern as applied to Database interactions via an ORM.
+
+The DB change expects that you have completed the API change.  Please do those steps first then return to this point. 
+
+The expand/contract pattern with ORMs can be a little confusing at first, because although we are following the 'step 1 - change the server to be forwards and backwards compatible' we are still changing some of the `client` in step 1.  This is because the client generates code that executes on the server in the form of SQL scripts, so we need to make the necessary changes to alter the SQL scripts that get created and executed inside the DB.
+
+The three DB change steps are marked with tags:
+
+* [db-step-1](https://github.com/chrissimon-au/safe-contract-changes-demo-java/commit/db-step-1)
+    * Add the two new columns, ensuring they are nullable
+    * Update the server Entity so that on writes it writes to all columns: old _and_ new
+    * Update the server Entity so that on reads it will try and use the new columns first, and fall back to the old columns if the new ones are not populated
+    * This changes ensure that if a request is handled by a new instance, it will generate data that is still usable by an old instance.  And if a request is handled by an old instance, even though it will leave the new fields as `null`, a new instance can still use that record.
+* [db-step-2](https://github.com/chrissimon-au/safe-contract-changes-demo-java/commit/db-step-2)
+    * At this point, all nodes should be updated, so all new records should have the new fields populated, and there should be no more new records with unpopulated new fields.
+    * Execute a script to copy data from old fields to new fields for all old records that don't yet have data in the new fields
+    * Ensure the old fields are nullable
+    * Remove awareness of the old fields from the server Entity.  New nodes will only be reading and writing to the new fields.  Old nodes will read and write to both old and new fields, but as all records now have populated new fields, they will, practically speaking, only be using the new fields.
+* [db-step-3](https://github.com/chrissimon-au/safe-contract-changes-demo-java/commit/db-step-3)
+    * Now there should be no nodes that know anything about the old fields
+    * It is safe to drop the old fields from the db
+
+To ensure each step's deployment is safe, you can:
+
+1. Checkout the step by tag (replace `?` with the step number you are up to)
+    ```
+    git checkout db-step-?
+    ```
+2. Start the test loop:
+    ```
+    cd tests/e2e
+    npm run test:aws:loop
+    ```
+3. Deploy:
+    ```
+    cd infra
+    cdk deploy
+    ```
+
+After the deployment is complete, you can stop the tests with CTRL-C.
