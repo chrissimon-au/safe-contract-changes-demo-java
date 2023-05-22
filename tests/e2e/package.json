@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "server": "cd ../../server && mvn spring-boot:run",
-    "app": "cd ../../app && npm run dev"
+    "app": "cd ../../app && npm run dev",
+    "test:local": "playwright test",
+    "test:aws": "APP_URL=http://d10yiiw4t9acsc.cloudfront.net/ npm run test:local",
+    "test:aws:loop": "APP_URL=http://d10yiiw4t9acsc.cloudfront.net/ ./loop-test.sh"
   },
   "keywords": [],
   "author": "",

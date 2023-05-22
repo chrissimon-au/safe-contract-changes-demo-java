@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const url = "http://localhost:3000";
+const url = "/";
 
 test('Page loads successfully', async ({ page }) => {
   await page.goto(url);
@@ -9,18 +9,27 @@ test('Page loads successfully', async ({ page }) => {
   await expect(page).toHaveTitle(/Safe Contract Changes Demo/);
 });
 
-test('Can add a new person', async ({ page}) => {
-  await page.goto(url);
+const repeatCount = Number.parseInt(process.env.REPEAT_COUNT || "1");
 
-  const name = await page.getByLabel('Name');
-  await expect(name).toBeEnabled();
 
-  await name.fill('Demo Name');
-  const addPersonButton = await page.getByRole('button', {name: "Add Person"});
-  await expect(addPersonButton).toBeEnabled();
+test(`Can add a new person ${repeatCount} times`, async ({ page }) => { 
+    page.goto(url);
+    
+    for (var idx = 1; idx <= repeatCount; idx++) {
 
-  await addPersonButton.click();
+      const nameInput = await page.getByLabel('Name');
+      await expect(nameInput).toBeEnabled();
 
-  const nameConfirm = await page.getByText('Demo Name');
-  await expect(nameConfirm).toBeVisible();
-});
+      const name = `Demo Name ${idx}`;
+
+      await nameInput.fill(name);
+      const addPersonButton = await page.getByRole('button', {name: "Add Person"});
+      await expect(addPersonButton).toBeEnabled();
+
+      await addPersonButton.click();
+
+      const nameConfirm = await page.getByText(name);
+      await expect(nameConfirm).toBeVisible();
+    }
+}); 
+
