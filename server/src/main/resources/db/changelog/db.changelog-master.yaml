@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/03_migrate_data.sql
   - include:
       file: db/changelog/04_old_field_nullable.yml
+  - include:
+      file: db/changelog/05_drop_old_column.yml
