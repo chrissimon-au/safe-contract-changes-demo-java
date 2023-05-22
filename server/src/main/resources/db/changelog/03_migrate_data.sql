@@ -1,0 +1,1 @@
+UPDATE Name SET first_name = SUBSTR(name, 1, STRPOS(name, ' ')), last_name = SUBSTR(Name, (STRPOS(Name, ' ') + 1)) WHERE first_name IS NULL;
