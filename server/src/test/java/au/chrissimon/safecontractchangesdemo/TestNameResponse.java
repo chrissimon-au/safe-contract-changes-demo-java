@@ -3,7 +3,7 @@ package au.chrissimon.safecontractchangesdemo;
 import java.util.UUID;
 
 public class TestNameResponse {
-    private TestFullName fullName;
+    private String name;
     private UUID id;
 
     public UUID getId() {
@@ -14,21 +14,21 @@ public class TestNameResponse {
         this.id = id;
     }
 
-    public TestFullName getFullName() {
-        return fullName;
+    public String getName() {
+        return name;
     }
 
-    public void setFullName(TestFullName fullName) {
-        this.fullName = fullName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public TestNameResponse() {
         super();
     }
 
-    public TestNameResponse(UUID id, TestFullName fullName) {
+    public TestNameResponse(UUID id, String name) {
         super();
         this.id = id;
-        this.fullName = fullName;
+        this.name = name;
     }
 }

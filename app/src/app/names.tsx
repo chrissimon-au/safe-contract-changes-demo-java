@@ -2,37 +2,33 @@
 import { useState, useMemo, ChangeEvent, FormEvent } from 'react';
 import dynamic from 'next/dynamic';
 
-type FullName = {firstName: string, lastName: string};
-const DefaultFullName: FullName | null = null;
-const InitialFullName: FullName = { firstName: '', lastName: '' };
-
 function Names() {
-    const [inputName, setInputName] = useState(DefaultFullName);
+    const [inputName, setInputName] = useState('');
     const [loading, setLoading] = useState(false);
-    const [name, setName] = useState(DefaultFullName);
+    const [name, setName] = useState('');
 
     const config = useMemo(() => fetch('config.json')
         .then(response => response.json()), []);
 
     const onChange = (e:ChangeEvent<HTMLInputElement>) => {
-        setInputName({ ...(inputName || InitialFullName), [e.target.id]: e.target.value});
+        setInputName(e.target.value);
     }
 
-    const setNameResult = (name: FullName | null) => {
+    const setNameResult = (name: string) => {
         setLoading(!!!name);
-        setName(name || DefaultFullName);
+        setName(name);
     }
 
     const addPerson = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setNameResult(null);
+        setNameResult('');
         
         config
             .then(c => 
                 fetch(`${c.SERVER_URL}/names`, {
                     method: "POST",
                     body: JSON.stringify({
-                        fullName: inputName
+                        name: inputName
                     }),
                     headers: {
                         'Content-type': 'application/json',
@@ -41,23 +37,17 @@ function Names() {
             .then(response => fetch(response.headers.get("Location")!))
             .then(response => response.json())
             .then(n => {
-                setNameResult(n.fullName);
+                setNameResult(n.name);
             });
     };
 
     return (
         <form className="form" onSubmit={addPerson}>
             <div className="mb-4">
-                <label className="label" htmlFor="firstName">
-                    Firstname
+                <label className="label" htmlFor="name">
+                    Name
                 </label>
-                <input className="input" id="firstName" value={inputName && inputName.firstName || ''} onChange={onChange} type="text" placeholder="Name"/>
-            </div>
-            <div className="mb-4">
-                <label className="label" htmlFor="lastName">
-                    Lastname
-                </label>
-                <input className="input" id="lastName" value={inputName && inputName.lastName || ''} onChange={onChange} type="text" placeholder="Name"/>
+                <input className="input" id="name" value={inputName} onChange={onChange} type="text" placeholder="Name"/>
             </div>
             <div>
                 <button className="btn" type="submit">
@@ -66,7 +56,7 @@ function Names() {
             </div>
             {loading && <div className="result">loading...</div>}
             {name && <div className="result">
-                {name.firstName} {name.lastName}
+                {name}
             </div>}
         </form>
     )
