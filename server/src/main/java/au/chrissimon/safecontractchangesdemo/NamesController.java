@@ -28,7 +28,8 @@ public class NamesController {
     @PostMapping("/names")
     public ResponseEntity<NameResponse> addName(@RequestBody AddNameRequest request) {
 
-        Name name = new Name(request.getName());
+        FullNameDto fullName = request.getFullName();
+        Name name = new Name(new FullName(fullName.getFirstName(), fullName.getLastName()));
 
         nameRepository.save(name);
 

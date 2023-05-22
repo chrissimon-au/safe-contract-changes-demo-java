@@ -1,22 +1,22 @@
 package au.chrissimon.safecontractchangesdemo;
 
 public class TestAddNameRequest {
-    private String name;
+    private TestFullName fullName;
 
-    public String getName() {
-        return name;
+    public TestFullName getFullName() {
+        return fullName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFullName(TestFullName fullName) {
+        this.fullName = fullName;
     }
 
     public TestAddNameRequest() {
         super();
     }
 
-    public TestAddNameRequest(String name) {
+    public TestAddNameRequest(TestFullName fullName) {
         super();
-        this.name = name;
+        this.fullName = fullName;
     }
 }
