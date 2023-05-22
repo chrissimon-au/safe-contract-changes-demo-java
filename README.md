@@ -96,3 +96,59 @@ There are a few possible reasons for the failures you've seen:
 2. The server had completed deployment and updated the database schema.  The SPA had not yet completed deployment, and was randomly interacting with an old version of the server that hadn't been 'rolled over' yet, and the old version of the server was unable to make use of the new database schema.
 
 Eventually, once all deployments are completed and the versions are aligned, the tests will pass again.
+
+## The SAFE Way
+
+The SAFE way to deploy contract changes is to use the "Parallel Change" or "Expand/Contract" pattern.  It is a simple three steps:
+
+1. Expand: Change the Server so that it is backwards and forwards compatible, supporting clients of both versions
+2. Change: Change the client so that it is consuming only the new version
+3. Contract: Clean up the Server so that it only supports the new version
+
+### API Demo
+
+This repository contains an illustration of this pattern as applied to the REST APIs.
+
+If you ran the 'WRONG way' demo above, please reset your environment:
+
+```
+git checkout reset
+# Reset the db
+cd db
+./reset_aws_db.sh
+cd ../infra
+cdk deploy
+```
+
+Once complete you will have the 'single field' version of the app.
+
+The three steps are marked with tags:
+
+* [api-step-1](https://github.com/chrissimon-au/safe-contract-changes-demo-java/commit/api-step-1)
+    * Update the server to accept both single `name` field and a `fullName` object with `firstName` and `lastName` fields
+    * If the `fullName` field is supplied, construct a single name by appending the names with a space separator and store it on the single `name` field.
+    * When returning the result, return both the `name` and `fullName` fields with the latter formed by splitting on whitespace to extract the first and last names.
+* [api-step-2](https://github.com/chrissimon-au/safe-contract-changes-demo-java/commit/api-step-2)
+    * Update the app to only send and only accept the `fullName` field and no longer know anything about the `name` field
+* [api-step-3](https://github.com/chrissimon-au/safe-contract-changes-demo-java/commit/api-step-3)
+    * Update the server to only accept and return the `fullName` field
+    * There is still an adaptor function in both directions in the domain layer which accepts and returns the fullName objects, but stores the single `name` field.
+
+To ensure each step's deployment is safe, you can:
+
+1. Checkout the step by tag (replace `?` with the step number you are up to)
+    ```
+    git checkout api-step-?
+    ```
+2. Start the test loop:
+    ```
+    cd tests/e2e
+    npm run test:aws:loop
+    ```
+3. Deploy:
+    ```
+    cd infra
+    cdk deploy
+    ```
+
+After the deployment is complete, you can stop the tests with CTRL-C.
