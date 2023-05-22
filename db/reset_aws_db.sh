@@ -1,0 +1,1 @@
+./run_sql.sh reset_db.pgsql

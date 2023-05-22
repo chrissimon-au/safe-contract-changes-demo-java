@@ -1,0 +1,1 @@
+SELECT Name, COUNT(1) FROM Name GROUP BY Name;
